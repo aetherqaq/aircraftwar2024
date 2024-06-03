@@ -42,6 +42,7 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
     public static final String TAG = "BaseGame";
     boolean mbLoop; //控制绘画线程的标志位
     private final SurfaceHolder mSurfaceHolder;
+    private boolean mIsDrawing;
     private Canvas canvas;  //绘图的画布
     private final Paint mPaint;
 
@@ -467,12 +468,22 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
     }
 
     private void paintScoreAndLife() {
-        /**TODO:动态绘制文本框显示英雄机的分数和生命值**/
+        /**动态绘制文本框显示英雄机的分数和生命值**/
+        int x = 50;
+        int y = 50;
+        int color = Color.argb(255,255,0,0);
+        Paint paint = new Paint();
+        paint.setColor(color);
+        paint.setTextSize(50);
+        canvas.drawText("SCORE:"+score,x,y,paint);
+        y += 30;
+        canvas.drawText("LIFE:"+heroAircraft.getHp(),x,y,paint);
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
-        /*TODO*/
+        mIsDrawing = true;
+        new Thread(this).start();
     }
 
     @Override
@@ -483,11 +494,13 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
-        /*TODO*/
+        mIsDrawing = false;
     }
 
     @Override
     public void run() {
-        /*TODO*/
+        while(mIsDrawing){
+            draw();
+        }
     }
 }
