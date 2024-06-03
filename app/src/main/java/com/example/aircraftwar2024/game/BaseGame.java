@@ -501,6 +501,7 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
     public void run() {
         while(mIsDrawing){
             draw();
+            action();
         }
     }
 }
