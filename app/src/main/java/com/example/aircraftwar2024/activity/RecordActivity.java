@@ -14,20 +14,22 @@ import com.example.aircraftwar2024.game.BaseGame;
 import com.example.aircraftwar2024.game.EasyGame;
 import com.example.aircraftwar2024.game.HardGame;
 import com.example.aircraftwar2024.game.MediumGame;
+import com.example.aircraftwar2024.ranking.User;
+import com.example.aircraftwar2024.ranking.UserDaoImpl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RecordActivity extends AppCompatActivity {
-
+    private int gameType = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
 
-        int gameType = 1;
         if (getIntent() != null) {
             gameType = getIntent().getIntExtra("gameType", 1);
         }
@@ -44,12 +46,17 @@ public class RecordActivity extends AppCompatActivity {
         ListView list = (ListView) findViewById(R.id.ListView);
 
         //生成适配器的Item和动态数组对应的元素
-        SimpleAdapter listItemAdapter = new SimpleAdapter(
-                this,
-                getData(),
-                R.layout.activity_item,
-                new String[]{"rank","name","score","time"},
-                new int[]{R.id.rank,R.id.name,R.id.score,R.id.time});
+        SimpleAdapter listItemAdapter = null;
+        try {
+            listItemAdapter = new SimpleAdapter(
+                    this,
+                    getData(),
+                    R.layout.activity_item,
+                    new String[]{"rank","name","score","time"},
+                    new int[]{R.id.rank,R.id.name,R.id.score,R.id.time});
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         //添加并且显示
         list.setAdapter(listItemAdapter);
@@ -58,16 +65,31 @@ public class RecordActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                Map<String, Object> clkmap = (Map<String, Object>) arg0.getItemAtPosition(arg2);
-                String text = "name"+clkmap.get("name").toString();
-                Toast.makeText(RecordActivity.this,text,Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private List<Map<String, Object>> getData() {
+    private List<Map<String, Object>> getData() throws IOException {
         ArrayList<Map<String, Object>> listitem = new ArrayList<Map<String, Object>>();
         Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("rank", "排名");
+        map.put("name", "用户");
+        map.put("score", "得分");
+        map.put("time", "时间");
+        listitem.add(map);
+
+        UserDaoImpl userDao = new UserDaoImpl(this,gameType);
+        List<User> userList = userDao.getAllUsers();
+
+        for(int i=0;i<userList.size();i++) {
+            User user = userList.get(i);
+            map.put("rank", i+1);
+            map.put("name", user.getUserName());
+            map.put("score", user.getScore());
+            map.put("time", user.getTime());
+            listitem.add(map);
+        }
 
         return listitem;
     }

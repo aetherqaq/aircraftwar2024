@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v.getId() == R.id.musicon) {
             Toast.makeText(this, "Music is on", Toast.LENGTH_SHORT).show();
         } else if (v.getId() == R.id.start) {
-            Intent intent = new Intent(MainActivity.this, OfflineActivity.class);
+            Intent intent = new Intent(MainActivity.this, RecordActivity.class);
             intent.putExtra("user","test");
             startActivity(intent);
         }
