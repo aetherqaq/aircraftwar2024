@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">aircraftwar2024</string>
-    <string name="musicon">开启音乐</string>
-    <string name="musicoff">关闭音乐</string>
-    <string name="gamesstart">单机游戏</string>
+    <string name="music_on">开启音乐</string>
+    <string name="music_off">关闭音乐</string>
+    <string name="games_start">单机游戏</string>
     <string name="page1">用户首页</string>
     <string name="difficulty_selection">单机模式难度选择</string>
     <string name="easy_mode">简单模式</string>

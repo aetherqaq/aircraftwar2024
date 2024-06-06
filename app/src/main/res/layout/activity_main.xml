@@ -21,7 +21,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="136dp"
         android:layout_marginTop="296dp"
-        android:text="@string/gamesstart"
+        android:text="@string/games_start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,7 +42,7 @@
             android:layout_marginStart="160dp"
             android:layout_marginTop="4dp"
             android:buttonTint="@color/white"
-            android:text="@string/musicon" />
+            android:text="@string/music_on" />
 
         <RadioButton
             android:id="@+id/musicoff"
@@ -51,7 +51,7 @@
             android:layout_marginStart="160dp"
             android:layout_marginTop="4dp"
             android:buttonTint="@color/white"
-            android:text="@string/musicoff"
+            android:text="@string/music_off"
             android:checked="true"
             />
 

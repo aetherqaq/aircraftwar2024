@@ -3,6 +3,7 @@ package com.example.aircraftwar2024.ranking;
 import android.content.Context;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,22 +25,19 @@ public class UserDaoImpl implements UserDao{
         else{
             dir = "HardData.txt";
         }
-        BufferedReader br = null;
-        try {
-             br = new BufferedReader(new InputStreamReader(context.openFileInput(dir), "UTF-8"));
-            String name,time,score;
-            User user;
-            while((score = br.readLine())!=null){
-                name = br.readLine();
-                time = br.readLine();
-                user = new User(Integer.parseInt(score),name,time);
-                users.add(user);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if(br!=null) br.close();
+
+        FileInputStream fis = context.openFileInput(dir);
+        BufferedReader br = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8));
+        String name,time,score;
+        User user;
+        while((score = br.readLine())!=null){
+            name = br.readLine();
+            time = br.readLine();
+            user = new User(Integer.parseInt(score),name,time);
+            users.add(user);
         }
+        br.close();
+        fis.close();
 
     }
 

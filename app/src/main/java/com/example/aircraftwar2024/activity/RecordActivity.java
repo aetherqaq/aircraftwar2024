@@ -2,11 +2,13 @@ package com.example.aircraftwar2024.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.aircraftwar2024.R;
@@ -18,13 +20,17 @@ import com.example.aircraftwar2024.ranking.User;
 import com.example.aircraftwar2024.ranking.UserDaoImpl;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class RecordActivity extends AppCompatActivity {
     private int gameType = 1;
+    private int score = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,14 +38,16 @@ public class RecordActivity extends AppCompatActivity {
 
         if (getIntent() != null) {
             gameType = getIntent().getIntExtra("gameType", 1);
+            score = getIntent().getIntExtra("score",0);
         }
 
+        TextView textDifficulty = (TextView) findViewById(R.id.textDifficulty);
         if (gameType == 1) {
-            ;
+            textDifficulty.setText("简单模式");
         } else if (gameType == 2) {
-
+            textDifficulty.setText("普通模式");
         } else if (gameType == 3) {
-
+            textDifficulty.setText("困难模式");
         }
 
         //获得Layout里面的ListView
@@ -67,6 +75,7 @@ public class RecordActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
             }
         });
+
     }
 
     private List<Map<String, Object>> getData() throws IOException {
@@ -80,10 +89,16 @@ public class RecordActivity extends AppCompatActivity {
         listitem.add(map);
 
         UserDaoImpl userDao = new UserDaoImpl(this,gameType);
+        String name = "test";
+        Date date = new Date();
+        @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+        String time = format.format(date);
+        userDao.doAdd(new User(score,name,time));
         List<User> userList = userDao.getAllUsers();
 
         for(int i=0;i<userList.size();i++) {
             User user = userList.get(i);
+            map = new HashMap<String, Object>();
             map.put("rank", i+1);
             map.put("name", user.getUserName());
             map.put("score", user.getScore());
