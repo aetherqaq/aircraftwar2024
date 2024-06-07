@@ -26,19 +26,20 @@ public class UserDaoImpl implements UserDao{
             dir = "HardData.txt";
         }
 
-        FileInputStream fis = context.openFileInput(dir);
-        BufferedReader br = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8));
-        String name,time,score;
-        User user;
-        while((score = br.readLine())!=null){
-            name = br.readLine();
-            time = br.readLine();
-            user = new User(Integer.parseInt(score),name,time);
-            users.add(user);
+        if(new File(dir).exists()){
+            FileInputStream fis = context.openFileInput(dir);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8));
+            String name,time,score;
+            User user;
+            while((score = br.readLine())!=null){
+                name = br.readLine();
+                time = br.readLine();
+                user = new User(Integer.parseInt(score),name,time);
+                users.add(user);
+            }
+            br.close();
+            fis.close();
         }
-        br.close();
-        fis.close();
-
     }
 
     //获取所有用户
@@ -63,7 +64,7 @@ public class UserDaoImpl implements UserDao{
     public void update() throws IOException {
         OutputStreamWriter osw = null;
         try {
-            osw = new OutputStreamWriter(context.openFileOutput(dir, Context.MODE_PRIVATE),"UTF-8");
+            osw = new OutputStreamWriter(context.openFileOutput(dir, Context.MODE_PRIVATE), StandardCharsets.UTF_8);
             for(User user: users){
                 osw.write(Integer.toString(user.getScore()));
                 osw.write(System.lineSeparator());
