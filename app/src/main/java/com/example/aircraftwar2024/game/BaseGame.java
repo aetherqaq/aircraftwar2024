@@ -25,6 +25,7 @@ import com.example.aircraftwar2024.factory.enemy_factory.EliteFactory;
 import com.example.aircraftwar2024.factory.enemy_factory.EnemyFactory;
 import com.example.aircraftwar2024.factory.enemy_factory.MobFactory;
 import com.example.aircraftwar2024.music.MyMediaPlayer;
+import com.example.aircraftwar2024.music.MySoundPool;
 import com.example.aircraftwar2024.supply.AbstractFlyingSupply;
 import com.example.aircraftwar2024.supply.BombSupply;
 import java.util.LinkedList;
@@ -103,9 +104,13 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
 
     protected int enemyMaxNumber = 5;
 
+    /**
+     * 音效
+     */
     private boolean musicFlag = false;
     private MyMediaPlayer bgmPlayer;
     private MyMediaPlayer bossBgmPlayer;
+    private MySoundPool mySoundPool;
 
     private boolean gameOverFlag = false;
     private int score = 0;
@@ -151,6 +156,7 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
         if(musicFlag){
             bgmPlayer = new MyMediaPlayer(context, R.raw.bgm);
             bossBgmPlayer = new MyMediaPlayer(context, R.raw.bgm_boss);
+            mySoundPool = new MySoundPool(context);
         }
 
         // 初始化英雄机
@@ -385,6 +391,10 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
                     // 敌机损失一定生命值
                     enemyAircraft.decreaseHp(bullet.getPower());
                     bullet.vanish();
+                    //音效
+                    if(musicFlag){
+                        mySoundPool.playBulletHit();
+                    }
                     if (enemyAircraft.notValid()) {
                         //获得分数，产生道具补给
                         score += enemyAircraft.score();
@@ -409,6 +419,16 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
                 continue;
             }
             if (heroAircraft.crash(flyingSupply) || flyingSupply.crash(heroAircraft)) {
+                //音效
+                if(musicFlag){
+                    if(flyingSupply instanceof BombSupply){
+                        mySoundPool.playBoom();
+                    }
+                    else{
+                        mySoundPool.playGetSupply();
+                    }
+                }
+
                 flyingSupply.activate();
                 flyingSupply.vanish();
             }

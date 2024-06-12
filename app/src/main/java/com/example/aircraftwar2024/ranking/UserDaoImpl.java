@@ -1,6 +1,7 @@
 package com.example.aircraftwar2024.ranking;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +27,7 @@ public class UserDaoImpl implements UserDao{
             dir = "HardData.txt";
         }
 
-        if(new File(dir).exists()){
+        try{
             FileInputStream fis = context.openFileInput(dir);
             BufferedReader br = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8));
             String name,time,score;
@@ -39,6 +40,7 @@ public class UserDaoImpl implements UserDao{
             }
             br.close();
             fis.close();
+        }catch (FileNotFoundException e){
         }
     }
 
@@ -55,6 +57,7 @@ public class UserDaoImpl implements UserDao{
         Collections.sort(users);
         try {
             this.update();
+            Toast.makeText(context, "Save successfully", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -67,11 +70,11 @@ public class UserDaoImpl implements UserDao{
             osw = new OutputStreamWriter(context.openFileOutput(dir, Context.MODE_PRIVATE), StandardCharsets.UTF_8);
             for(User user: users){
                 osw.write(Integer.toString(user.getScore()));
-                osw.write(System.lineSeparator());
+                osw.append("\r\n");
                 osw.write(user.getUserName());
-                osw.write(System.lineSeparator());
+                osw.append("\r\n");
                 osw.write(user.getTime());
-                osw.write(System.lineSeparator());
+                osw.append("\r\n");
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
