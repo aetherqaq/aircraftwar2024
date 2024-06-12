@@ -1,8 +1,11 @@
 package com.example.aircraftwar2024.activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -76,6 +79,40 @@ public class RecordActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("确定删除第"+arg2+"条数据？")
+                        .setTitle("提示");
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        userDao.doDelete(arg2-1);
+                        //生成适配器的Item和动态数组对应的元素
+                        SimpleAdapter listItemAdapter = null;
+                        try {
+                            listItemAdapter = new SimpleAdapter(
+                                    getActivity(),
+                                    getData1(),
+                                    R.layout.activity_item,
+                                    new String[]{"rank","name","score","time"},
+                                    new int[]{R.id.rank,R.id.name,R.id.score,R.id.time});
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        //添加并且显示
+                        list.setAdapter(listItemAdapter);
+                    }
+                });
+
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(getActivity(), "取消", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
@@ -109,5 +146,34 @@ public class RecordActivity extends AppCompatActivity {
         }
 
         return listitem;
+    }
+
+    private List<Map<String, Object>> getData1() throws IOException {
+        ArrayList<Map<String, Object>> listitem = new ArrayList<Map<String, Object>>();
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("rank", "排名");
+        map.put("name", "用户");
+        map.put("score", "得分");
+        map.put("time", "时间");
+        listitem.add(map);
+
+        List<User> userList = userDao.getAllUsers();
+
+        for(int i=0;i<userList.size();i++) {
+            User user = userList.get(i);
+            map = new HashMap<String, Object>();
+            map.put("rank", i+1);
+            map.put("name", user.getUserName());
+            map.put("score", user.getScore());
+            map.put("time", user.getTime());
+            listitem.add(map);
+        }
+
+        return listitem;
+    }
+
+    private Context getActivity(){
+        return this;
     }
 }

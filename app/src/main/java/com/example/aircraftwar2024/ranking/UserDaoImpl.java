@@ -88,6 +88,7 @@ public class UserDaoImpl implements UserDao{
         users.remove(users.get(num));
         try {
             this.update();
+            Toast.makeText(context, "Save successfully", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
