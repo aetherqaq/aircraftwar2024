@@ -19,7 +19,8 @@ import com.example.aircraftwar2024.game.MediumGame;
 
 public class GameActivity extends AppCompatActivity {
     private static final String TAG = "GameActivity";
-
+    private boolean musicFlag;
+    private String userName;
     public static int screenWidth, screenHeight;
 
     @Override
@@ -27,7 +28,8 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         getScreenHW();
-
+        userName = getIntent().getStringExtra("user");
+        musicFlag = getIntent().getBooleanExtra("musicFlag",true);
         int gameType = 1;
         if (getIntent() != null) {
             gameType = getIntent().getIntExtra("gameType", 1);
@@ -35,11 +37,11 @@ public class GameActivity extends AppCompatActivity {
 
         BaseGame baseGameView = null;
         if (gameType == 1) {
-            baseGameView = new EasyGame(this);
+            baseGameView = new EasyGame(this,musicFlag);
         } else if (gameType == 2) {
-            baseGameView = new MediumGame(this);
+            baseGameView = new MediumGame(this,musicFlag);
         } else if (gameType == 3) {
-            baseGameView = new HardGame(this);
+            baseGameView = new HardGame(this,musicFlag);
         }
 
         setContentView(baseGameView);

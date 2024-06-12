@@ -12,7 +12,7 @@ import com.example.aircraftwar2024.R;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-
+    private boolean musicFlag = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,12 +30,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v){
         if (v.getId() == R.id.musicoff){
+            musicFlag = false;
             Toast.makeText(this, "Music is off", Toast.LENGTH_SHORT).show();
         } else if (v.getId() == R.id.musicon) {
+            musicFlag = true;
             Toast.makeText(this, "Music is on", Toast.LENGTH_SHORT).show();
         } else if (v.getId() == R.id.start) {
-            Intent intent = new Intent(MainActivity.this, RecordActivity.class);
+            Intent intent = new Intent(MainActivity.this, OfflineActivity.class);
             intent.putExtra("user","test");
+            intent.putExtra("musicFlag",musicFlag);
             startActivity(intent);
         }
     }
