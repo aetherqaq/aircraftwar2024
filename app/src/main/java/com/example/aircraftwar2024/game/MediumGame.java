@@ -1,11 +1,16 @@
 package com.example.aircraftwar2024.game;
 
 import android.content.Context;
+import android.os.Handler;
+import android.app.Activity;
 import com.example.aircraftwar2024.ImageManager;
+import com.example.aircraftwar2024.aircraft.AbstractEnemyAircraft;
+
+import java.util.List;
 
 public class MediumGame extends BaseGame{
-    public MediumGame(Context context,boolean musicFlag) {
-        super(context,musicFlag);
+    public MediumGame(Context context, Handler handler,boolean musicFlag) {
+        super(context,handler, musicFlag);
         this.backGround = ImageManager.BACKGROUND2_IMAGE;
         this.enemyMaxNumber = 3;
         this.heroShootCycle = 9;

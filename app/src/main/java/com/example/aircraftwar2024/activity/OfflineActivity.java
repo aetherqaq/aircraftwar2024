@@ -17,6 +17,7 @@ public class OfflineActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_offline);
+        ActivityManager.getActivityManager().addActivity(this);
         userName = getIntent().getStringExtra("user");
         musicFlag = getIntent().getBooleanExtra("musicFlag",true);
         Button btn1 = (Button) findViewById(R.id.easy_button);

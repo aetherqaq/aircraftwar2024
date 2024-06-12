@@ -7,8 +7,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -27,6 +29,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import android.view.View;
+import android.widget.Button;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +44,25 @@ public class RecordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
+        ActivityManager.getActivityManager().addActivity(this);
+
+        Button btn1 = findViewById(R.id.back_to_main);
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActivityManager.getActivityManager().finishActivity(RecordActivity.this);
+
+                // Return to the previous MainActivity instance if it exists
+                //ActivityManager.getActivityManager().finishActivity(MainActivity.class);
+                Intent intent = new Intent(RecordActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         if (getIntent() != null) {
             gameType = getIntent().getIntExtra("gameType", 1);
-            score = getIntent().getIntExtra("score",0);
-            //name = getIntent().getStringExtra("user");
+            score = getIntent().getIntExtra("user_score",0);
+            name = getIntent().getStringExtra("user_name");
         }
 
         TextView textDifficulty = (TextView) findViewById(R.id.textDifficulty);

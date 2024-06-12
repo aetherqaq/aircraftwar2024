@@ -30,8 +30,19 @@ import com.example.aircraftwar2024.supply.AbstractFlyingSupply;
 import com.example.aircraftwar2024.supply.BombSupply;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.widget.TextView;
+import com.example.aircraftwar2024.DAO.User;
+import com.example.aircraftwar2024.DAO.UserDao;
+import java.io.*;
 
 
 /**
@@ -65,6 +76,11 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
      */
     protected double heroShootCycle = 10;
     private int heroShootCounter = 0;
+    private Handler handler;
+    UserDao data;
+    User user;
+    private long startTime;
+    private Context context;
 
     protected int tickCycle = Integer.MAX_VALUE;
     protected int tickCounter = 0;
@@ -142,8 +158,12 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
     private final EnemyFactory bossEnemyFactory;
     private final Random random = new Random();
 
-    public BaseGame(Context context, boolean musicFlag){
+    public BaseGame(Context context,Handler handler, boolean musicFlag){
         super(context);
+        this.context = context;
+        this.handler = handler;
+        this.startTime = System.currentTimeMillis();
+
 
         mbLoop = true;
         mPaint = new Paint();  //设置画笔
@@ -174,6 +194,14 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
 
         heroController();
     }
+
+    /*//Scheduled 线程池，用于定时任务调度
+    ThreadFactory gameThread = r -> {
+        Thread t =new Thread(r);
+        t.setName("game thread");
+        return t;
+    };
+    exe = new ScheduledThreadPoolExecutor(1, gameThread);*/
     private void heroShootAction() {
         // 英雄射击
         heroBullets.addAll(heroAircraft.shoot());
@@ -449,13 +477,13 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
         enemyAircrafts.removeIf(AbstractFlyingObject::notValid);
         flyingSupplies.removeIf(AbstractFlyingObject::notValid);
 
-        if (heroAircraft.notValid()) {
-            gameOverFlag = true;
-            mbLoop = false;
-            Log.i(TAG, "heroAircraft is not Valid");
+        // 游戏结束
+        if (heroAircraft.getHp() <= 0) {
+            gameOver();
         }
-
     }
+
+
 
     public void draw() {
         canvas = mSurfaceHolder.lockCanvas();
@@ -524,6 +552,7 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
         mIsDrawing = true;
         new Thread(this).start();
+        if(musicFlag) bgmPlayer.start();
     }
 
     @Override
@@ -532,21 +561,59 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
         GameActivity.screenHeight = i2;
     }
 
-    @Override
-    public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
+    private String formatTime(long timeTaken) {
+        int seconds = (int) (timeTaken / 1000) % 60;
+        int minutes = (int) ((timeTaken / (1000 * 60)) % 60);
+        int hours = (int) ((timeTaken / (1000 * 60 * 60)) % 24);
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    private void gameOver() {
+        gameOverFlag = true;
+        mbLoop = false;
+        Log.i(TAG, "heroAircraft is not Valid");
+        long endTime = System.currentTimeMillis();
+        long timeTaken = endTime - startTime;
+        System.out.println("Game Over!");
+
         if(musicFlag){
             bgmPlayer.stop();
             bossBgmPlayer.stop();
         }
+
+        // 格式化时间为合适的字符串
+        String formattedTime = formatTime(timeTaken);
+
+        // 使用适当的构造函数初始化 user
+        user = new User(score, "userName", formattedTime);
+
+        // 发送消息
+        Message message = Message.obtain();
+        message.what = GameActivity.MSG_SHOW_RANKING;
+        message.obj = user;
+        handler.sendMessage(message);
+    }
+
+    @Override
+    public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
+        gameOver();
         mIsDrawing = false;
     }
 
     @Override
     public void run() {
-        if(musicFlag) bgmPlayer.start();
-        while(mIsDrawing){
+
+        while (mbLoop) {
             draw();
             action();
         }
+        // 游戏结束后仍然需要发送消息
+        if (gameOverFlag) {
+            Message message = Message.obtain();
+            message.what = GameActivity.MSG_SHOW_RANKING;
+            message.obj = user;
+            handler.sendMessage(message);
+        }
     }
+
 }

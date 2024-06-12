@@ -32,4 +32,18 @@ public class MyMediaPlayer {
         bgMP.release();
         bgMP = null;
     }
+
+    public void setMute(boolean mute){
+        if (bgMP != null) {
+            if (mute) {
+                bgMP.setVolume(0, 0);
+            } else {
+                bgMP.setVolume(1, 1);
+            }
+        }
+    }
+
+    public boolean isPlaying() {
+        return bgMP != null && bgMP.isPlaying();
+    }
 }

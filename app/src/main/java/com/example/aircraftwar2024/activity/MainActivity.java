@@ -7,16 +7,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import com.example.aircraftwar2024.activity.ActivityManager;
 
 import com.example.aircraftwar2024.R;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private boolean musicFlag = true;
+    private boolean musicFlag = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ActivityManager.getActivityManager().addActivity(this);
 
         Button btn1 = (Button) findViewById(R.id.musicon);
         Button btn2 = (Button) findViewById(R.id.musicoff);
