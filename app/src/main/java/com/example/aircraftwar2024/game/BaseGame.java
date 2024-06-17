@@ -1,5 +1,6 @@
 package com.example.aircraftwar2024.game;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -26,8 +27,15 @@ import com.example.aircraftwar2024.factory.enemy_factory.EnemyFactory;
 import com.example.aircraftwar2024.factory.enemy_factory.MobFactory;
 import com.example.aircraftwar2024.music.MyMediaPlayer;
 import com.example.aircraftwar2024.music.MySoundPool;
+import com.example.aircraftwar2024.ranking.User;
+import com.example.aircraftwar2024.ranking.UserDao;
+import com.example.aircraftwar2024.ranking.UserDaoImpl;
 import com.example.aircraftwar2024.supply.AbstractFlyingSupply;
 import com.example.aircraftwar2024.supply.BombSupply;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -40,8 +48,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.TextView;
-import com.example.aircraftwar2024.DAO.User;
-import com.example.aircraftwar2024.DAO.UserDao;
 import java.io.*;
 
 
@@ -77,7 +83,6 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
     protected double heroShootCycle = 10;
     private int heroShootCounter = 0;
     private Handler handler;
-    UserDao data;
     User user;
     private long startTime;
     private Context context;
@@ -581,16 +586,11 @@ public abstract class BaseGame extends SurfaceView implements SurfaceHolder.Call
             bossBgmPlayer.stop();
         }
 
-        // 格式化时间为合适的字符串
-        String formattedTime = formatTime(timeTaken);
-
-        // 使用适当的构造函数初始化 user
-        user = new User(score, "userName", formattedTime);
-
+        int integer = score;
         // 发送消息
         Message message = Message.obtain();
         message.what = GameActivity.MSG_SHOW_RANKING;
-        message.obj = user;
+        message.obj = integer;
         handler.sendMessage(message);
     }
 

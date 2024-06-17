@@ -1,5 +1,6 @@
 package com.example.aircraftwar2024.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,13 +12,19 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.aircraftwar2024.DAO.User;
 import com.example.aircraftwar2024.R;
 import com.example.aircraftwar2024.game.BaseGame;
 import com.example.aircraftwar2024.game.EasyGame;
 import com.example.aircraftwar2024.game.HardGame;
 import com.example.aircraftwar2024.game.MediumGame;
 import com.example.aircraftwar2024.activity.ActivityManager;
+import com.example.aircraftwar2024.ranking.User;
+import com.example.aircraftwar2024.ranking.UserDaoImpl;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class GameActivity extends AppCompatActivity {
@@ -41,14 +48,15 @@ public class GameActivity extends AppCompatActivity {
                 super.handleMessage(msg);
                 Log.d(TAG,"handleMessage");
                 if (msg.what == 1) {
-                        User user = (User)msg.obj;
+                        Date date = new Date();
+                        @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+                        String time = format.format(date);
+                        int score = (int)msg.obj;
+                        UserDaoImpl.userDao.doAdd(new User(score,userName,time));
                         //Toast.makeText(GameActivity.this,"GameOver",Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(GameActivity.this,RecordActivity.class);
-                        intent.putExtra("user_name", user.getUserName());
-                        intent.putExtra("user_score", user.getScore());
                         intent.putExtra("gameType",gameType);
                         //intent.putExtra("user_time", user.getTime());
-
 
                         startActivity(intent);
 
@@ -62,6 +70,12 @@ public class GameActivity extends AppCompatActivity {
         musicFlag = getIntent().getBooleanExtra("musicFlag",true);
         if (getIntent() != null) {
             gameType = getIntent().getIntExtra("gameType", 1);
+        }
+
+        try {
+            UserDaoImpl.userDao = new UserDaoImpl(this,gameType);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         BaseGame baseGameView = null;

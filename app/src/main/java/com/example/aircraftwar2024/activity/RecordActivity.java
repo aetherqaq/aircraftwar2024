@@ -61,8 +61,6 @@ public class RecordActivity extends AppCompatActivity {
 
         if (getIntent() != null) {
             gameType = getIntent().getIntExtra("gameType", 1);
-            score = getIntent().getIntExtra("user_score",0);
-            name = getIntent().getStringExtra("user_name");
         }
 
         TextView textDifficulty = (TextView) findViewById(R.id.textDifficulty);
@@ -73,6 +71,13 @@ public class RecordActivity extends AppCompatActivity {
         } else if (gameType == 3) {
             textDifficulty.setText("困难模式");
         }
+
+        try {
+            userDao = new UserDaoImpl(this,gameType);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
         //获得Layout里面的ListView
         ListView list = (ListView) findViewById(R.id.ListView);
@@ -109,7 +114,7 @@ public class RecordActivity extends AppCompatActivity {
                         try {
                             listItemAdapter = new SimpleAdapter(
                                     getActivity(),
-                                    getData1(),
+                                    getData(),
                                     R.layout.activity_item,
                                     new String[]{"rank","name","score","time"},
                                     new int[]{R.id.rank,R.id.name,R.id.score,R.id.time});
@@ -137,36 +142,6 @@ public class RecordActivity extends AppCompatActivity {
     }
 
     private List<Map<String, Object>> getData() throws IOException {
-        ArrayList<Map<String, Object>> listitem = new ArrayList<Map<String, Object>>();
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        map.put("rank", "排名");
-        map.put("name", "用户");
-        map.put("score", "得分");
-        map.put("time", "时间");
-        listitem.add(map);
-
-        userDao = new UserDaoImpl(this,gameType);
-        Date date = new Date();
-        @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-        String time = format.format(date);
-        userDao.doAdd(new User(score,name,time));
-        List<User> userList = userDao.getAllUsers();
-
-        for(int i=0;i<userList.size();i++) {
-            User user = userList.get(i);
-            map = new HashMap<String, Object>();
-            map.put("rank", i+1);
-            map.put("name", user.getUserName());
-            map.put("score", user.getScore());
-            map.put("time", user.getTime());
-            listitem.add(map);
-        }
-
-        return listitem;
-    }
-
-    private List<Map<String, Object>> getData1() throws IOException {
         ArrayList<Map<String, Object>> listitem = new ArrayList<Map<String, Object>>();
         Map<String, Object> map = new HashMap<String, Object>();
 
