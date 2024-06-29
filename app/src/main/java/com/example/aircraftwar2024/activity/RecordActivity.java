@@ -37,8 +37,6 @@ import java.util.Map;
 
 public class RecordActivity extends AppCompatActivity {
     private int gameType = 1;
-    private int score = 0;
-    private String name = "test";
     private UserDaoImpl userDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +59,6 @@ public class RecordActivity extends AppCompatActivity {
 
         if (getIntent() != null) {
             gameType = getIntent().getIntExtra("gameType", 1);
-            score = getIntent().getIntExtra("user_score",0);
-            name = getIntent().getStringExtra("user_name");
         }
 
         TextView textDifficulty = (TextView) findViewById(R.id.textDifficulty);
@@ -147,10 +143,6 @@ public class RecordActivity extends AppCompatActivity {
         listitem.add(map);
 
         userDao = new UserDaoImpl(this,gameType);
-        Date date = new Date();
-        @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("MM-dd HH:mm");
-        String time = format.format(date);
-        userDao.doAdd(new User(score,name,time));
         List<User> userList = userDao.getAllUsers();
 
         for(int i=0;i<userList.size();i++) {

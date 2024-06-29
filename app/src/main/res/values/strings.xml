@@ -11,4 +11,8 @@
     <string name="back_to_main">返回首页</string>
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
+    <string name="online">联机对战</string>
+    <string name="game_over">游戏结束</string>
+    <string name="my_score">我的分数</string>
+    <string name="opponent_score">对手分数</string>
 </resources>

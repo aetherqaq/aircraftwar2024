@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao{
+    public static UserDaoImpl userDao = null;
     private String dir;
     private Context context;
     //模拟数据库数据
@@ -61,6 +62,10 @@ public class UserDaoImpl implements UserDao{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     @Override

@@ -28,8 +28,10 @@ public class MyMediaPlayer {
     }
 
     public void stop(){
-        bgMP.stop();
-        bgMP.release();
+        if(bgMP!=null) {
+            bgMP.stop();
+            bgMP.release();
+        }
         bgMP = null;
     }
 
